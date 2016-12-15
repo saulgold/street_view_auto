@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Street View side-by-side</title>
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #map, #pano {
+        float: left;
+        height: 50%;
+        width: 45%;
+      }
+    </style>
+  </head>
+  <body>
+  <div id="map"></div>
+  <div id="pano"></div>
+  <script type = "text/javascript">
+  
+    var marker;
+    var map;
+    var streetviewClient;
+    var panorama;
+    var centre = new GLatLng( 42.343,-71.097);
+    //var centre = {lat: 42.345573, lng: -71.098326};
+    var vehicleOn = 0;
+    var vehicleSpeed = 0;
+    var vehicleBearing = 0; 
+/*  var fenway = {lat: 42.345573, lng: -71.098326};
+var map = new google.maps.Map(document.getElementById('map'), {
+      center: fenway,
+      zoom: 16
+});
+      
+var panorama = new google.maps.StreetViewPanorama(
+  document.getElementById('pano'), {
+    position: fenway,
+    pov: {
+      heading: 34,
+      pitch: 10
+    }
+});
+       */
+    function difference(link) {
+      return Math.abs(pano.pov.heading%360 - link.heading);
+    }
+      function moveForward(){
+        var curr;
+        for(i=o;i< pano.links.length; i++){
+          var differ = difference(pano.links[i])
+        }
+      }
+      
+      function initialize() {
+        
+     /*   var fenway = {lat: 42.345573, lng: -71.098326};
+        var map = new google.maps.Map(document.getElementById('map'), {
+          center: centre,
+          zoom: 16
+        }); */
+      
+      map = new GMap2(document.getElementById("mapDiv"));
+      map.setCenter(centre,15);
+      
+      map.addControl(new GScaleControl());
+      map.addControl(new GMenuMapTypeControl());
+      map.addControl(new GLargeMapControl3D());  
+      
+      map.enableDoubleClickZoom();
+      map.enableContinuousZoom();
+      map.enableScrollWheelZoom();
+                      
+      
+        var bounds = {
+          north: 42.343,
+          south: 42.346,
+          east: -71.097,
+          west: -71.099
+        };
+ // Define a rectangle and set its editable property to true.
+        var rectangle = new google.maps.Rectangle({
+          bounds: bounds,
+          editable: true,
+          draggable: true
+        });
+
+ 
+        rectangle.setMap(map);
+        var panorama = new google.maps.StreetViewPanorama(
+          document.getElementById('pano'), {
+          position: fenway,
+          pov: {
+            heading: 34,
+            pitch: 10
+          }
+        }); 
+        
+        map.setStreetView(panorama);
+        var currentPanorama = panorama.links[0];
+        panorama.setPano(currentPanorama.pano);
+        
+            marker = new GMarker(centre, {"icon":icon, "draggable":true});
+            map.addOverlay(marker);
+            GEvent.addListener(marker, "dragend", function()
+               {
+                    var point = marker.getPoint();
+                    streetviewClient.getNearestPanoramaLatLng(point, function (reply)
+                    {
+                        if (reply) 
+                        {
+                            centre = reply;
+                            marker.setPoint(centre);
+                            map.setCenter(centre);
+
+                            panorama.setLocationAndPOV(centre, {yaw:vehicleBearing});
+                            
+                            vehicleSpeed = -1;
+                            
+                            updateLocation();
+                        }
+                    });
+               }
+            );            
+            
+              GEvent.addListener(this.map, "click", function(streetOverlay,point)
+              {
+                    if (point)
+                    {
+                        streetviewClient.getNearestPanoramaLatLng(point, function (reply)
+                        {
+                            if (reply) 
+                            {
+                                centre = reply;
+                                marker.setPoint(centre);
+                                map.setCenter(centre);
+
+                                panorama.setLocationAndPOV(centre, {yaw:vehicleBearing});
+                                
+                                vehicleSpeed = -1;
+                                
+                                updateLocation();
+                            }
+                        });
+                        
+                    }
+               });
+               
+                           GEvent.addListener(panorama,"yawchanged",function(a)
+             {
+                if (a)
+                {
+                    vehicleBearing = parseInt(a);
+                    
+                    // update marker image
+                    var imageNum = Math.round(vehicleBearing/22.5) % 16;
+                    var imageUrl = "http://maps.google.com/intl/en_us/mapfiles/cb/man_arrow-" + imageNum + ".png";
+
+                    marker.setImage(imageUrl);
+                    
+                }
+             });  
+        
+        }
+      function updateLocation()
+        {
+            var point = marker.getPoint();
+            
+            var stats = "lat: <b>" + point.lat() + "</b> lng: <b>" + point.lng() + "</b>";
+            document.getElementById("locDiv").innerHTML = stats;                       
+        }
+      function autoMove(){
+        vehicleSpeed =1;
+        updateLocation();
+      }
+      function speed(a)
+      {
+          if (a < 0)
+          {
+              // brake
+              vehicleSpeed = -1;
+          }
+          else
+          {
+              // accel
+              vehicleSpeed += a;
+              
+              // speed limit
+              if (vehicleSpeed > 6)
+              {
+                  vehicleSpeed = 6;
+              }
+          }
+      }
+      function updateLocation()
+        {
+            var point = marker.getPoint();
+            
+            var stats = "lat: <b>" + point.lat() + "</b> lng: <b>" + point.lng() + "</b>";
+            document.getElementById("locDiv").innerHTML = stats;                       
+        }
+
+        // turn left or right        
+      function turn(a)
+        {
+            vehicleBearing += a;        
+            panorama.setPOV({yaw:vehicleBearing}); 
+
+
+            if (vehicleBearing < 0)
+            {
+                vehicleBearing += 360;
+            }
+            if (vehicleBearing > 360)
+            {
+                vehicleBearing -= 360;
+            }
+        }
+    </script>
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC2Cdn3P58oYQyqly2BhAVfouHd3G9X-n4&callback=initialize">
+    </script>
+    
+  
+    <td align="center">
+
+    <table><tr><td>
+
+    </td><td>
+    <input type="button" onclick="speed(1)" value=" Go" />
+    </td><td>
+    </td></tr><tr><td>
+    <input type="button" onclick="turn(-15)" value="null" />
+    </td><td>
+    <input type="button" onclick="speed(-1)" value="Stop" />
+    </td><td>
+    <input type="button" onclick="turn(15)" value="null" />
+
+    </td></tr></table>
+
+
+</td>
+    
+  </body>
+</html>
