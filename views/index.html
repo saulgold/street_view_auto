@@ -86,17 +86,34 @@ function moveBackward(){
           panorama.setPano(currentPanorama.pano);
          
 }
-      function move(){
-         links = panorama.links.length;
-        rand = Math.floor(Math.random()*(links+1))
-         var currentPanorama = panorama.links[rand];
-          panorama.setPano(currentPanorama.pano);
-           previousLink = rand
-          
-      /* var stats = "";
-      stats = 6;
-      document.getElementById("statDiv").innerHTML = stats;  */
-      }
+function move(){
+  
+    links = panorama.links.length;
+    rand = Math.floor(Math.random()*(links))
+    while(rand == previousLink){
+          rand = Math.floor(Math.random()*(links))
+    }
+    var currentPanorama = panorama.links[rand];
+    panorama.setPano(currentPanorama.pano);
+    previousLink = rand;
+
+    setTimeout("move()",500);
+    
+   
+/* var stats = "";
+stats = 6;
+document.getElementById("statDiv").innerHTML = stats;  */
+}
+
+function autoMove(){
+  for(i = 0 ; i<2;i++){
+    move();
+  }
+}
+
+function moveStart(){
+  setTimeout("move()",500);
+}
   function displayStats(){
     var stats = "";
     stats = rand;
@@ -136,9 +153,17 @@ function moveBackward(){
         }); 
         
         map.setStreetView(panorama);
+        
+        // GEvent.addListener(panorama,"yawchanged",function(a)){
+        //   moveStart();
+        // }
+        map.addListener('click', function(e){
+          move();
+        });
+
+
       
-      
-        }
+      }
 
     </script>
     <script async defer
@@ -151,7 +176,7 @@ function moveBackward(){
     <table><tr><td>
 
     </td><td>
-    <input type="button" onclick="move()" value=" Go" />
+    <input type="button" onclick="move();" value=" Go" />
     </td><td>
     </td></tr><tr><td>
     <input type="button" onclick="displayStats(-15)" value="null" />
