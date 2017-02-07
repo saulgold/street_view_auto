@@ -1,37 +1,35 @@
-## Welcome to GitHub Pages
+Welcome to the HyperDev BETA
+============================
 
-You can use the [editor on GitHub](https://github.com/saulgold/street_view_auto/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+Click `"Show"` in the header to see your app live. Updates to your code will instantly deploy and update live.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+HyperDev is a developer playground that lets you code a real web-app without the slow setup and deployment steps. 
 
-### Markdown
+[About HyperDev](https://hyperdev.com/about)
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
 
-```markdown
-Syntax highlighted code block
+Your Project
+------------
+intro
+-----
+A projec to automatically drive through a user-selected area
+todo
+-----
+- create a link between js streetview api and python CV
+- Automaticallly select area in js and trawl through it sending images to python
+- maybe store python app on server aswell?
 
-# Header 1
-## Header 2
-### Header 3
+On the back-end,
+- your app starts at `server.js`
+- add frameworks and packages in `package.json`
+- safely store app secrets in `.env`
 
-- Bulleted
-- List
+On the front-end,
+- edit `client.js`, `style.css` and `index.html`
+- drag in `assets`, like images or music, to add them to your project
 
-1. Numbered
-2. List
 
-**Bold** and _Italic_ and `Code` text
+Made by Fog Creek
+-----------------
 
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/saulgold/street_view_auto/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+\ ゜o゜)ノ
