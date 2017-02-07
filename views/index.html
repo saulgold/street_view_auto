@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Street View side-by-side</title>
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #map, #pano {
+        float: left;
+        height: 50%;
+        width: 45%;
+      }
+    </style>
+  </head>
+  <body>
+  <div id="map"></div>
+  <div id="pano"></div>
+  <div id="statDiv" ></div>
+  <script type = "text/javascript">
+  
+    var marker;
+    var map;
+    var streetviewClient;
+    var panorama;
+    var centre = new GLatLng( 42.343,-71.097);
+    //var centre = {lat: 42.345573, lng: -71.098326};
+    var vehicleOn = 0;
+    var vehicleSpeed = 0;
+    var vehicleBearing = 0; 
+    var rand;
+    var links
+    var previousLink;
+/*  var fenway = {lat: 42.345573, lng: -71.098326};
+var map = new google.maps.Map(document.getElementById('map'), {
+      center: fenway,
+      zoom: 16
+});
+      
+var panorama = new google.maps.StreetViewPanorama(
+  document.getElementById('pano'), {
+    position: fenway,
+    pov: {
+      heading: 34,
+      pitch: 10
+    }
+});
+       */
+    function difference(link) {
+      var diff = Math.abs(panorama.pov.heading % 360 - link.heading);
+      if(diff>180)
+         diff=Math.abs(360-diff);
+  
+      return diff;
+    }
+  function moveForward() {
+    
+          var currentPanorama;
+          for(i=0;i<panorama.links.length; i++){
+            var diff = difference(panorama.links[i])
+            if(currentPanorama == undefined){
+              currentPanorama = panorama.links[i]
+            }
+            
+            if(difference(currentPanorama)>diff){
+              currentPanorama = panorama.links[i];
+            }
+          }
+          panorama.setPano(currentPanorama.pano);
+  }
+function moveBackward(){
+            var currentPanorama;
+          for(i=0;i<panorama.links.length; i++){
+            var diff = difference(panorama.links[i])
+            if(currentPanorama == undefined){
+              currentPanorama = panorama.links[i]
+            }
+            
+            if(difference(currentPanorama)<diff){
+              currentPanorama = panorama.links[i];
+            }
+          }
+          panorama.setPano(currentPanorama.pano);
+         
+}
+function move(){
+  
+    links = panorama.links.length;
+    rand = Math.floor(Math.random()*(links))
+    while(rand == previousLink){
+          rand = Math.floor(Math.random()*(links))
+    }
+    var currentPanorama = panorama.links[rand];
+    panorama.setPano(currentPanorama.pano);
+    previousLink = rand;
+
+    setTimeout("move()",500);
+    
+   
+/* var stats = "";
+stats = 6;
+document.getElementById("statDiv").innerHTML = stats;  */
+}
+
+function autoMove(){
+  for(i = 0 ; i<2;i++){
+    move();
+  }
+}
+
+function moveStart(){
+  setTimeout("move()",500);
+}
+  function displayStats(){
+    var stats = "";
+    stats = rand;
+    document.getElementById("statDiv").innerHTML = stats;  
+  }
+      function initialize() {
+        
+        var fenway = {lat: 42.345573, lng: -71.098326};
+        var map = new google.maps.Map(document.getElementById('map'), {
+          center: fenway,
+          zoom: 16
+        }); 
+      
+      
+        var bounds = {
+          north: 42.343,
+          south: 42.346,
+          east: -71.097,
+          west: -71.099
+        };
+ // Define a rectangle and set its editable property to true.
+        var rectangle = new google.maps.Rectangle({
+          bounds: bounds,
+          editable: true,
+          draggable: true
+        });
+
+ 
+        rectangle.setMap(map);
+         panorama = new google.maps.StreetViewPanorama(
+          document.getElementById('pano'), {
+          position: fenway,
+          pov: {
+            heading: 34,
+            pitch: 10
+          }
+        }); 
+        
+        map.setStreetView(panorama);
+        
+        // GEvent.addListener(panorama,"yawchanged",function(a)){
+        //   moveStart();
+        // }
+        map.addListener('click', function(e){
+          move();
+        });
+
+
+      
+      }
+
+    </script>
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC2Cdn3P58oYQyqly2BhAVfouHd3G9X-n4&callback=initialize">
+    </script>
+    
+  
+    <td align="center">
+
+    <table><tr><td>
+
+    </td><td>
+    <input type="button" onclick="move();" value=" Go" />
+    </td><td>
+    </td></tr><tr><td>
+    <input type="button" onclick="displayStats(-15)" value="null" />
+    </td><td>
+    <input type="button" onclick="moveBackward()" value="back" />
+    </td><td>
+    <input type="button" onclick="turn(15)" value="null" />
+
+    </td></tr></table>
+
+</td><td style="width:200px" align="right">
+
+    <div id="locDiv" style="color:gray" ></div>
+   <!--  <div id="statDiv" ></div> -->
+    <div id="speedDiv" ></div>
+</td>
+    
+  </body>
+</html>
